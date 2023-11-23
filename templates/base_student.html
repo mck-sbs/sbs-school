@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% block styles %}
+        <!-- Bootstrap CSS -->
+        {{ bootstrap.load_css() }}
+            <style>
+            #messagesList {
+                height: 200px; /* Beispielhöhe */
+                overflow-y: auto;
+                }
+            </style>
+
+    {% endblock %}
+
+    <title>{% block title %}sbs@school{% endblock %}</title>
+    {% endblock %}
+</head>
+<body>
+    <!-- Your page content -->
+    <div class= "jumbotron">
+        <h1>sbs@school</h1><br>
+        <p>Mit sbs@school können Lehrkräfte GPT-Links für Schülerinnen und Schüler generieren. Die Kontextinformationen sind von den Lehrkräften nach Belieben einstellbar.</p>
+    </div>
+    {% block content %}
+
+    {% endblock %}
+
+    {% block scripts %}
+        <!-- Optional JavaScript -->
+        {{ bootstrap.load_js() }}
+    {% endblock %}
+</body>
+</html>

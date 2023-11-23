@@ -1,0 +1,105 @@
+{% extends "base_student.html" %}
+{% from 'bootstrap4/form.html' import render_form, render_field %}
+
+
+
+{% block content %}
+<meta id="chat-data" data-name="{{data}}">
+<meta id="chat-context" data-name="{{context}}">
+<meta id="chat-token" data-name="{{token}}">
+
+    <div class="p-3 mb-2 bg-secondary text-white">
+        <ul id="messagesList">
+            <!-- Hier werden die Nachrichten eingefügt -->
+        </ul>
+    </div>
+    <div class="container" id="dat">
+
+        <div class="container" id="dat">
+            <form id="chatForm">
+                {{ render_form(form) }}
+            </form>
+        </div>
+
+          {#  {% if data != None %}
+                {% for dat in data %}
+                    <p>{{ dat }}</p>
+                {% endfor %}
+            {% endif %}#}
+
+    </div>
+{% endblock %}
+
+    {% block scripts %}
+    <script>
+
+        var t = document.getElementById('chat-token').getAttribute('data-name');
+        var c = document.getElementById('chat-context').getAttribute('data-name');
+        var msg = [
+            { token: t}, {context: c }, {last: "-" },
+            { chat:[
+                    {user:"Hallo!"},
+                    {bot:"Hallo auch."} ]}]
+
+        function scrollToBottom() {
+            var messagesList = document.getElementById("messagesList");
+            messagesList.scrollTop = messagesList.scrollHeight;
+        }
+        function sendDataToFlask(dataToSend) {
+            fetch('/send_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend)
+            })
+            .then(response => response.json())
+            .then(ret => {
+                console.log('Empfangene Antwort:', ret);
+                var node = document.createElement("LI");
+                var textnode = document.createTextNode("Bot: " + ret.last); // Verarbeitet die Statusmeldung
+                node.appendChild(textnode);
+                document.getElementById("messagesList").appendChild(node);
+                scrollToBottom();
+                var neueNachricht = { bot: ret.last };
+                msg[3].chat.push(neueNachricht);
+            })
+            .catch((error) => {
+                console.error('Fehler:', error);
+            });
+        }
+        sendDataToFlask({ message: msg });
+
+        document.getElementById('chatForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Verhindert das Neuladen der Seite
+            // sendButton.disabled = true; // Deaktiviert den Button
+
+        var sendButton = document.getElementById('sendButton');
+        sendButton.disabled = true; // Deaktiviert den Button
+
+        var formData = new FormData(this);
+        var neueNachricht = { user: formData.get('msg') };
+        msg[3].chat.push(neueNachricht);
+        //formData.get('submit').disabled = true; // Deaktiviert den Button
+        var dataToSend = {
+            token: document.getElementById('chat-token').getAttribute('data-name'),
+            context: document.getElementById('chat-context').getAttribute('data-name'),
+            message: formData.get('msg') // Nimmt den Wert des Nachrichtenfeldes
+        };
+        var node = document.createElement("LI");
+        var textnode = document.createTextNode("User: " + formData.get('msg')); // Verarbeitet die Statusmeldung
+        node.appendChild(textnode);
+        document.getElementById("messagesList").appendChild(node);
+        scrollToBottom();
+        //sendDataToFlask(dataToSend);
+        sendDataToFlask({ message: msg });
+        this.msg.value = ''; // Setzt das 'msg' Feld zurück
+        // Button nach 3 Sekunden wieder aktivieren
+        setTimeout(function() {
+            sendButton.disabled = false;
+        }, 3000); // 3000 Millisekunden = 3 Sekunden
+    });
+
+
+    </script>
+    {% endblock %}

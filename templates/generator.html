@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from 'bootstrap4/form.html' import render_form, render_field %}
+
+{% block content %}
+    <div class="container">
+
+        {{ render_form(form) }}
+        {% if data != None %}
+            <br>
+            <p class="font-weight-light">{{ data }}</p>
+        {% endif %}
+
+        {% if link != None %}
+                <a href="{{ link }}">{{ link }}</a><br>
+        {% endif %}
+    </div>
+
+{% endblock %}
