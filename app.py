@@ -5,8 +5,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_simple_crypt import SimpleCrypt
 from flask_bootstrap import Bootstrap4
 from flask_sqlalchemy import SQLAlchemy
-#from flask_htpasswd import HtPasswdAuth
-
+from flask_htpasswd import HtPasswdAuth
 
 
 from openai import OpenAI
@@ -25,10 +24,12 @@ TOKEN_LEN = 32
 SQL_PATH = "sqlite:///gpt.db"
 
 app = Flask(__name__)
+app.config['FLASK_HTPASSWD_PATH'] = 'config/.htpasswd'
 app.config['SECRET_KEY'] = 'diesen key bitte ändern'
 app.config['SQLALCHEMY_DATABASE_URI'] = SQL_PATH
 
 bootstrap = Bootstrap4(app)
+htpasswd = HtPasswdAuth(app)
 cipher = SimpleCrypt()
 cipher.init_app(app)
 db = SQLAlchemy(app)
@@ -95,7 +96,8 @@ def delete():
     return render_template('delete.html', form=form, data=data)
 
 @app.route('/generator.html', methods=('GET','POST'))
-def generator():
+@htpasswd.required
+def generator(user):
     form = gf.GenForm()
     data = "Bitte die Daten oben eingeben. Im Anschluss wird die API-Key überrpüft"
 
