@@ -5,7 +5,7 @@
 **SBS@school ermöglicht Lehrkräften, moderierte Links zu generieren, durch die Schülerinnen und Schüler ChatGPT anonym nutzen können.**
 
 
-For Testing: User=sbs PW=sbs
+For testing: User=sbs PW=sbs
 
 ![conrol pic1](./pics/index.png)
 ![conrol pic2](./pics/index_mobile.png)
