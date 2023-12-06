@@ -5,7 +5,7 @@
 **SBS@school ermöglicht Lehrkräften, moderierte Links zu generieren, durch die Schülerinnen und Schüler ChatGPT anonym nutzen können.**
 
 
-For testing: User=sbs PW=sbs
+For testing: user=sbs pw=sbs
 
 ![conrol pic1](./pics/index.png)
 ![conrol pic2](./pics/index_mobile.png)
@@ -13,4 +13,5 @@ For testing: User=sbs PW=sbs
 ![conrol pic3](./pics/chat.png)
 ![conrol pic4](./pics/delete.png)
 
+Dependencies: pip install flask-simple-crypt bootstrap-flask flask-sqlalchemy flask-htpasswd openai flask-wtf
 
