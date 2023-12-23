@@ -8,4 +8,6 @@ class ChatForm(FlaskForm):
     submit = SubmitField('Senden', render_kw={'id': 'sendButton'})
 
 
-
+class ChatPicForm(FlaskForm):
+    msg = StringField('Nachricht: ', validators=[DataRequired()])
+    submit = SubmitField('Senden', render_kw={'id': 'sendButton'})

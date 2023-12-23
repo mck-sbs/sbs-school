@@ -16,6 +16,7 @@ import chatform as cf
 ### Werte aus der user_config.json
 API_KEY= ""
 GPT_MODEL = ""
+DALLE_MODEL = ""
 LINK = ""
 DEL_WINDOW = 7
 ###
@@ -52,18 +53,21 @@ class Link(db.Model):
 with app.app_context():
     db.drop_all()
     db.create_all()
-    with open("config/user_config_sbs.json", 'r') as file:
+    with open("./config/user_config_sbs.json", 'r') as file:
         config = json.load(file)
         API_KEY = config['API_KEY']
         GPT_MODEL = config['GPT_MODEL']
         LINK = config['LINK']
         DEL_WINDOW = config['DEL_WINDOW']
+        DALLE_MODEL = config['DALLE_MODEL']
 
 
 @app.route("/", methods=('GET','POST'))
 def index():
     return render_template('index.html')
 
+
+@app.route("/delete", methods=('GET','POST'))
 @app.route("/delete.html", methods=('GET','POST'))
 def delete():
     form = df.DelForm()
@@ -95,11 +99,61 @@ def delete():
             data = "Anzahl gelöschter Links:  " + str(cnt)
     return render_template('delete.html', form=form, data=data)
 
+@app.route('/generatorpic', methods=('GET','POST'))
+@app.route('/generatorpic.html', methods=('GET','POST'))
+@htpasswd.required
+def generatorpic(user):
+    form = gf.GenPicForm()
+    data = "Bitte die Anzahl der Links oben eingeben. Im Anschluss wird die API-Key überrpüft. Mit jedem Link kann nur ein Bild generiert werden."
+
+    if form.validate_on_submit():
+        link = " "
+        api_key = API_KEY #form.api_key.data.strip()
+        context = " "
+        try:
+            client = OpenAI(api_key=api_key)
+            completion = client.chat.completions.create(
+                model=GPT_MODEL,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "Antorte mit 'Hallo', wenn du das liest."
+                    },
+                ],
+            )
+            #print(completion.choices[0].message.content)
+        except:
+            data = "API-Key konnte nicht verifiziert werden. Bitte überprüfen Sie den Key und versuchen Sie es erneut."
+        else:
+            token_master = secrets.token_urlsafe(TOKEN_LEN)
+
+            try:
+                links = []
+                for i in range(form.vals.data):
+                    token = secrets.token_urlsafe(TOKEN_LEN)
+
+                    link = LINK + token + "§PIC§.html"
+
+                    db.session.add(Link(cipher.encrypt(api_key.encode()), token, token_master, context))
+
+                    db.session.commit()
+                    links.append(link)
+
+            except:
+                data = "Fehler beim Speichern der Daten. Bitte versuchen Sie es erneut."
+            else:
+                data = "API-Key wurde erfolgreich überprüft. Bitte speichern Sie den Token, um den Link für die Schülerinnen und Schüler später zu löschen. Andernfalls wird der Link nach zwei Tagen gelöscht. Der Token für den Link lautet: " + token_master
+
+            return render_template('generatorpic.html', form=form, data=data, links=links)
+
+    return render_template('generatorpic.html', form=form, data=data)
+
+@app.route('/generator', methods=('GET','POST'))
 @app.route('/generator.html', methods=('GET','POST'))
 @htpasswd.required
 def generator(user):
     form = gf.GenForm()
-    data = "Bitte die Daten oben eingeben. Im Anschluss wird die API-Key überrpüft"
+    data = "Bitte den Kontext oben eingeben. Im Anschluss wird die API-Key überrpüft"
 
     if form.validate_on_submit():
         link = " "
@@ -117,7 +171,7 @@ def generator(user):
                     },
                 ],
             )
-            print(completion.choices[0].message.content)
+            #print(completion.choices[0].message.content)
         except:
             data = "API-Key konnte nicht verifiziert werden. Bitte überprüfen Sie den Key und versuchen Sie es erneut."
         else:
@@ -134,18 +188,18 @@ def generator(user):
             except:
                 data = "Fehler beim Speichern der Daten. Bitte versuchen Sie es erneut."
             else:
-                data = "API-Key wurde erfolgreich überprüft. Bitte speichern Sie den Token, um den Link für die Schülerinnen und Schüler später zu löschen. Andernfalls wird der Link nach sieben Tagen gelöscht. Der Token für den Link lautet: " + token_master
+                data = "API-Key wurde erfolgreich überprüft. Bitte speichern Sie den Token, um den Link für die Schülerinnen und Schüler später zu löschen. Andernfalls wird der Link nach zwei Tagen gelöscht. Der Token für den Link lautet: " + token_master
 
             return render_template('generator.html', form=form, data=data, link=link)
 
     return render_template('generator.html', form=form, data=data)
 
-@app.route('/get_messages', methods=['POST'])
-def get_messages():
-    print("ssss")
-    msg = [{"message": "Hallo", "timestamp": "2023-11-20 12:00"},
-            {"message": "Wie geht's?", "timestamp": "2023-11-20 12:01"}]
-    return jsonify(msg)
+#@app.route('/get_messages', methods=['POST'])
+#def get_messages():
+#    print("ssss")
+#    msg = [{"message": "Hallo", "timestamp": "2023-11-20 12:00"},
+#            {"message": "Wie geht's?", "timestamp": "2023-11-20 12:01"}]
+#    return jsonify(msg)
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
@@ -163,59 +217,110 @@ def send_message():
             api_key = cipher.decrypt(api_key.encode()).decode()
         elif 'context' in item:
             context = item['context']
-    #print("chat: ", chat_items)
-    #print("cont: ", context)
-    #print("api: ", api_key)
 
     msg = [{"role": "system", "content": context}]
 
     if chat_items is not None:
         for chat_item in chat_items:
             if 'user' in chat_item:
-                print("User sagt:", chat_item['user'])
+                #print("User sagt:", chat_item['user'])
                 msg.append({"role": "user", "content": chat_item['user']})
             if 'bot' in chat_item:
-                print("Bot antwortet:", chat_item['bot'])
+                #print("Bot antwortet:", chat_item['bot'])
                 msg.append({"role": "assistant", "content": chat_item['bot']})
 
     client = OpenAI(api_key=api_key)
     completion = client.chat.completions.create(model=GPT_MODEL,messages=msg)
     ret = completion.choices[0].message.content
 
+    return jsonify({"status": message, "last": ret})
 
-    print("xxxxxxxxxxxxx")
-    print(message)
-    print("xxxxxxxxxxxxx")
+@app.route('/send_messagePic', methods=['POST'])
+def send_messagePic():
+    data = request.json
+    message = data['message']
+    msg = ""
+
+    chat_items = None
+    api_key = None
+    context = None
+    link = None
+    for item in message:
+        if 'chat' in item:
+            chat_items = item['chat']
+        elif 'token' in item:
+            api_key = item['token']
+            api_key = cipher.decrypt(api_key.encode()).decode()
+        elif 'context' in item:
+            context = item['context']
+        elif 'link' in item:
+            link = item['link']
+
+    msg = chat_items[0]['user']
+    #print(link)
+
+    client = OpenAI(api_key=API_KEY)
+    response = client.images.generate(model=DALLE_MODEL, prompt=msg)
+    ret = response.data[0].url
+    #client = OpenAI(api_key=api_key)
+    #completion = client.chat.completions.create(model=GPT_MODEL,messages=msg)
+    #ret = completion.choices[0].message.content
+
+    # Lösche Link
+    status = db.session.query(Link).filter(Link.token.like(link))
+    cnt = status.count()
+    status.delete()
+    db.session.commit()
+    #print("Anzahl gelöschter Links:  " + str(cnt))
+
 
     return jsonify({"status": message, "last": ret})
 
-
 @app.route('/<name>', methods=('GET','POST'))
 def student(name=None):
-    data = " "
-    token = name.replace('.html', '')
+    if name.endswith('§PIC§.html') or name.endswith('§PIC§'):
+        #print("PIC")
+        token = name.replace('§PIC§.html', '')
 
-    status = db.session.query(Link).filter(Link.token.like(token))
-    cnt = status.count()
+        status = db.session.query(Link).filter(Link.token.like(token))
+        cnt = status.count()
 
-    if cnt == 1:
-        form = cf.ChatForm()
-        l = status.one()
-        api_key = l.api_key.decode()
+        if cnt == 1:
+            form = cf.ChatPicForm()
+            l = status.one()
+            api_key = l.api_key.decode()
 
-        context = l.context
+            context = l.context
 
-        data = [{"role": "system",
-                "content": context},
-                {"role": "last",
-                 "content": "---"},
-               {"role": "token",
-                "content": api_key}]
+            return render_template('chatpic.html', form=form, data=token, context=context, token=api_key)
+        else:
+            return render_template('error.html')
 
 
-        return render_template('chat.html', form=form, data=data, context=context, token=api_key)
     else:
-        return render_template('error.html')
+        token = name.replace('.html', '')
+
+        status = db.session.query(Link).filter(Link.token.like(token))
+        cnt = status.count()
+
+        if cnt == 1:
+            form = cf.ChatForm()
+            l = status.one()
+            api_key = l.api_key.decode()
+
+            context = l.context
+
+            data = [{"role": "system",
+                    "content": context},
+                    {"role": "last",
+                     "content": "---"},
+                   {"role": "token",
+                    "content": api_key}]
+
+
+            return render_template('chat.html', form=form, data=data, context=context, token=api_key)
+        else:
+            return render_template('error.html')
 
 
 if __name__ == '__main__':

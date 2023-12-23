@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, validators
+from wtforms import StringField, SubmitField, TextAreaField, validators, IntegerField, SelectField
 from wtforms.validators import DataRequired
 
 
@@ -10,5 +10,7 @@ class GenForm(FlaskForm):
                             [validators.optional(), validators.length(max=512)], default=example, render_kw={"rows": 7})
     submit = SubmitField('Generiere Link')
 
-
-
+class GenPicForm(FlaskForm):
+    #vals = SelectField("Anzahl Links:", choices=[(str(num), str(num)) for num in range(1, 34)])
+    vals = IntegerField('Anzahl Links:',[validators.DataRequired(), validators.NumberRange(min=1, max=33)])
+    submit = SubmitField('Generiere Links')
