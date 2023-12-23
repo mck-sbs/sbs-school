@@ -42,6 +42,10 @@
             messagesList.scrollTop = messagesList.scrollHeight;
         }
         function sendDataToFlask(dataToSend) {
+            var node = document.createElement("LI");
+            var textnode = document.createTextNode("... bitte warten ...");
+            node.appendChild(textnode);
+            document.getElementById("messagesList").appendChild(node);
             fetch('/send_messagePic', {
                 method: 'POST',
                 headers: {
