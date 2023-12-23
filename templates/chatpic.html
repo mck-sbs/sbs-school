@@ -57,13 +57,17 @@
             .then(ret => {
                 console.log('Empfangene Antwort:', ret);
                 var node = document.createElement("LI");
-                var textnode = document.createTextNode("Bot: " + ret.last); // Verarbeitet die Statusmeldung
-                node.appendChild(textnode);
+                var lk = document.createElement("a")
+                lk.title = ret.last
+                lk.href = ret.last
+                var textnode = document.createTextNode(ret.last); // Verarbeitet die Statusmeldung
+                lk.appendChild(textnode);
+                node.appendChild(lk);
                 document.getElementById("messagesList").appendChild(node);
                 scrollToBottom();
                 var neueNachricht = { bot: ret.last };
                 msg[3].chat.push(neueNachricht);
-                window.location.href = ret.last
+                //window.location.href = ret.last
             })
             .catch((error) => {
                 console.error('Fehler:', error);
