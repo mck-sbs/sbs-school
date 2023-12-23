@@ -12,5 +12,5 @@ class GenForm(FlaskForm):
 
 class GenPicForm(FlaskForm):
     #vals = SelectField("Anzahl Links:", choices=[(str(num), str(num)) for num in range(1, 34)])
-    vals = IntegerField('Anzahl Links:',[validators.DataRequired(), validators.NumberRange(min=1, max=33)])
+    vals = IntegerField('Anzahl Links (max. 33):',[validators.DataRequired(), validators.NumberRange(min=1, max=33)])
     submit = SubmitField('Generiere Links')

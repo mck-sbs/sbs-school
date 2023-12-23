@@ -21,12 +21,6 @@
             </form>
         </div>
 
-          {#  {% if data != None %}
-                {% for dat in data %}
-                    <p>{{ dat }}</p>
-                {% endfor %}
-            {% endif %}#}
-
     </div>
 {% endblock %}
 
@@ -45,7 +39,7 @@
             var messagesList = document.getElementById("messagesList");
             messagesList.scrollTop = messagesList.scrollHeight;
         }
-        function sendDataToFlask(dataToSend) {
+        function sendDataToFlaskChat(dataToSend) {
             fetch('/send_message', {
                 method: 'POST',
                 headers: {
@@ -55,7 +49,7 @@
             })
             .then(response => response.json())
             .then(ret => {
-                console.log('Empfangene Antwort:', ret);
+                //console.log('Empfangene Antwort:', ret);
                 var node = document.createElement("LI");
                 var textnode = document.createTextNode("Bot: " + ret.last); // Verarbeitet die Statusmeldung
                 node.appendChild(textnode);
@@ -68,36 +62,30 @@
                 console.error('Fehler:', error);
             });
         }
-        sendDataToFlask({ message: msg });
+        sendDataToFlaskChat({ message: msg });
 
         document.getElementById('chatForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Verhindert das Neuladen der Seite
-            // sendButton.disabled = true; // Deaktiviert den Button
 
-        var sendButton = document.getElementById('sendButton');
-        sendButton.disabled = true; // Deaktiviert den Button
+        var sendButtonChat = document.getElementById('sendButtonChat');
+        sendButtonChat.disabled = true; // Deaktiviert den Button
 
         var formData = new FormData(this);
         var neueNachricht = { user: formData.get('msg') };
         msg[3].chat.push(neueNachricht);
-        //formData.get('submit').disabled = true; // Deaktiviert den Button
-        var dataToSend = {
-            token: document.getElementById('chat-token').getAttribute('data-name'),
-            context: document.getElementById('chat-context').getAttribute('data-name'),
-            message: formData.get('msg') // Nimmt den Wert des Nachrichtenfeldes
-        };
+
         var node = document.createElement("LI");
         var textnode = document.createTextNode("User: " + formData.get('msg')); // Verarbeitet die Statusmeldung
         node.appendChild(textnode);
         document.getElementById("messagesList").appendChild(node);
         scrollToBottom();
-        //sendDataToFlask(dataToSend);
-        sendDataToFlask({ message: msg });
+
+        sendDataToFlaskChat({ message: msg });
         this.msg.value = ''; // Setzt das 'msg' Feld zurück
         // Button nach 3 Sekunden wieder aktivieren
         setTimeout(function() {
-            sendButton.disabled = false;
-        }, 3000); // 3000 Millisekunden = 3 Sekunden
+            sendButtonChat.disabled = false;
+        }, 3000); // 3000 Millisekunden
     });
 
 

@@ -65,11 +65,9 @@
                 console.error('Fehler:', error);
             });
         }
-        //sendDataToFlask({ message: msg });
 
         document.getElementById('chatForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Verhindert das Neuladen der Seite
-                // sendButton.disabled = true; // Deaktiviert den Button
 
             var sendButton = document.getElementById('sendButton');
             sendButton.disabled = true; // Deaktiviert den Button
@@ -78,13 +76,7 @@
             var neueNachricht = { user: formData.get('msg') };
             msg[3].chat.push(neueNachricht);
             msg[4].link = document.getElementById('chat-data').getAttribute('data-name');
-            //formData.get('submit').disabled = true; // Deaktiviert den Button
-            var dataToSend = {
-                token: document.getElementById('chat-token').getAttribute('data-name'),
-                context: document.getElementById('chat-context').getAttribute('data-name'),
-                message: formData.get('msg'), // Nimmt den Wert des Nachrichtenfeldes
-                link : document.getElementById('chat-data').getAttribute('data-name')
-            };
+
             var node = document.createElement("LI");
             var textnode = document.createTextNode("User: " + formData.get('msg')); // Verarbeitet die Statusmeldung
             node.appendChild(textnode);
