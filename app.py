@@ -39,8 +39,8 @@ class Link(db.Model):
     __tablename__ = 'link'
     id = db.Column(db.Integer, primary_key=True)
     api_key = db.Column(db.String, nullable=False)
-    token_master = db.Column(db.String, nullable=False)
-    token = db.Column(db.String, nullable=False)
+    token_master = db.Column(db.String, nullable=False, index=True)
+    token = db.Column(db.String, nullable=False, index=True)
     context = db.Column(db.String)
     time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     def __init__(self, api_key=None, token=None, token_master=None, context=context, time=None):
