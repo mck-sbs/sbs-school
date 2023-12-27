@@ -11,6 +11,10 @@ class GenForm(FlaskForm):
     submit = SubmitField('Generiere Link')
 
 class GenPicForm(FlaskForm):
+    example = "Die Eingabe muss über Dinosaurier handeln und mit dem Jugendschutz vereinbar sein."
+    # api_key = StringField('API-Key von OpenAI: ', validators=[DataRequired()])
+    context = TextAreaField('Bedingung (hier mit Beispieltext):',
+                            [validators.optional(), validators.length(max=512)], default=example, render_kw={"rows": 7})
     #vals = SelectField("Anzahl Links:", choices=[(str(num), str(num)) for num in range(1, 34)])
     vals = IntegerField('Anzahl Links (max. 33):',[validators.DataRequired(), validators.NumberRange(min=1, max=33)])
     submit = SubmitField('Generiere Links')

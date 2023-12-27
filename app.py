@@ -104,12 +104,12 @@ def delete():
 @htpasswd.required
 def generatorpic(user):
     form = gf.GenPicForm()
-    data = "Bitte die Anzahl der Links oben eingeben. Im Anschluss wird die API-Key überrpüft. Mit jedem Link kann nur ein Bild generiert werden."
+    data = "Bitte die Bedingung und die Anzahl der Links oben eingeben. Im Anschluss wird die API-Key überrpüft. Mit jedem Link kann nur ein Bild generiert werden."
 
     if form.validate_on_submit():
         link = " "
         api_key = API_KEY #form.api_key.data.strip()
-        context = " "
+        context = form.context.data.strip()
         try:
             client = OpenAI(api_key=api_key)
             completion = client.chat.completions.create(
@@ -194,12 +194,6 @@ def generator(user):
 
     return render_template('generator.html', form=form, data=data)
 
-#@app.route('/get_messages', methods=['POST'])
-#def get_messages():
-#    print("ssss")
-#    msg = [{"message": "Hallo", "timestamp": "2023-11-20 12:00"},
-#            {"message": "Wie geht's?", "timestamp": "2023-11-20 12:01"}]
-#    return jsonify(msg)
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
@@ -212,8 +206,8 @@ def send_message():
     for item in message:
         if 'chat' in item:
             chat_items = item['chat']
-        elif 'token' in item:
-            api_key = item['token']
+        elif 'ak' in item:
+            api_key = item['ak']
             api_key = cipher.decrypt(api_key.encode()).decode()
         elif 'context' in item:
             context = item['context']
@@ -247,34 +241,42 @@ def send_messagePic():
     link = None
     for item in message:
         if 'chat' in item:
-            chat_items = item['chat']
-        elif 'token' in item:
-            api_key = item['token']
+            msg_usr = item['chat']
+        elif 'ak' in item:
+            api_key = item['ak']
             api_key = cipher.decrypt(api_key.encode()).decode()
         elif 'context' in item:
             context = item['context']
         elif 'link' in item:
             link = item['link']
 
-    msg = chat_items[0]['user']
+    #msg_usr = chat_items[0]['user']
     #print(link)
-
-    client = OpenAI(api_key=API_KEY)
-    response = client.images.generate(model=DALLE_MODEL, prompt=msg)
-    ret = response.data[0].url
-    #client = OpenAI(api_key=api_key)
-    #completion = client.chat.completions.create(model=GPT_MODEL,messages=msg)
-    #ret = completion.choices[0].message.content
-
-    # Lösche Link
-    status = db.session.query(Link).filter(Link.token.like(link))
-    cnt = status.count()
-    status.delete()
-    db.session.commit()
-    #print("Anzahl gelöschter Links:  " + str(cnt))
-
-
-    return jsonify({"status": message, "last": ret})
+    msg = "Wenn die folgende Eingabe die Bedingung der Kontext-Information erfüllt, antworte mit 'OK', andernfalls mit 'NOK': " + msg_usr
+    data = [{"role": "system",
+             "content": context},
+            {"role": "user",
+             "content": msg}]
+    client = OpenAI(api_key=api_key)
+    completion = client.chat.completions.create(model=GPT_MODEL,messages=data)
+    ret = completion.choices[0].message.content
+    #print(ret)
+    #print(msg)
+    #print(context)
+    if ret == "OK":
+        print(ret)
+        client = OpenAI(api_key=api_key)
+        response = client.images.generate(model=DALLE_MODEL, prompt=msg_usr)
+        ret = response.data[0].url
+        # Lösche Link
+        status = db.session.query(Link).filter(Link.token.like(link))
+        cnt = status.count()
+        status.delete()
+        db.session.commit()
+        #print("Anzahl gelöschter Links:  " + str(cnt))
+        return jsonify({"status": message, "last": ret})
+    else:
+        return jsonify({"status": message, "last": "-"})
 
 @app.route('/<name>', methods=('GET','POST'))
 def student(name=None):
@@ -292,7 +294,7 @@ def student(name=None):
 
             context = l.context
 
-            return render_template('chatpic.html', form=form, data=token, context=context, token=api_key)
+            return render_template('chatpic.html', form=form, token=token, context=context, ak=api_key)
         else:
             return render_template('error.html')
 
@@ -314,11 +316,11 @@ def student(name=None):
                     "content": context},
                     {"role": "last",
                      "content": "---"},
-                   {"role": "token",
+                   {"role": "ak",
                     "content": api_key}]
 
 
-            return render_template('chat.html', form=form, data=data, context=context, token=api_key)
+            return render_template('chat.html', form=form, data=data, context=context, ak=api_key)
         else:
             return render_template('error.html')
 

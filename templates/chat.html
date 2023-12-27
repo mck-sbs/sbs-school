@@ -6,7 +6,7 @@
 {% block content %}
 <meta id="chat-data" data-name="{{data}}">
 <meta id="chat-context" data-name="{{context}}">
-<meta id="chat-token" data-name="{{token}}">
+<meta id="chat-ak" data-name="{{ ak }}">
 
     <div class="p-3 mb-2 bg-secondary text-white">
         <ul id="messagesList">
@@ -27,10 +27,10 @@
     {% block scripts %}
     <script>
 
-        var t = document.getElementById('chat-token').getAttribute('data-name');
+        var a = document.getElementById('chat-ak').getAttribute('data-name');
         var c = document.getElementById('chat-context').getAttribute('data-name');
         var msg = [
-            { token: t}, {context: c }, {last: "-" },
+            { ak: a }, {context: c }, {last: "-" },
             { chat:[
                     {user:"Hallo!"},
                     {bot:"Hallo auch."} ]}]
