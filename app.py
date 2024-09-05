@@ -227,6 +227,7 @@ def send_message():
     client = OpenAI(api_key=api_key)
     completion = client.chat.completions.create(model=GPT_MODEL,messages=msg)
     ret = completion.choices[0].message.content
+    #print(ret)
 
     return jsonify({"status": message, "last": ret})
 

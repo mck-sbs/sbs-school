@@ -54,17 +54,29 @@
             })
             .then(response => response.json())
             .then(ret => {
-                //console.log('Empfangene Antwort:', ret);
                 var node = document.createElement("LI");
-                var textnode = document.createTextNode("Bot: " + ret.last); // Verarbeitet die Statusmeldung
-                node.appendChild(textnode);
+
+                // Ersetze Zeilenumbrüche (\n) durch <br> und Tabs/Leerzeichen durch &nbsp;
+                var formattedText = ret.last
+                .replace(/\n/g, "<br>")         // Zeilenumbrüche durch <br>
+                .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;") // Tabs durch 4 Leerzeichen
+                .replace(/ {2}/g, "&nbsp;&nbsp;"); // Doppelte Leerzeichen durch &nbsp;
+
+                // Setze den Text als HTML-Inhalt des Listenelements (dadurch werden <br>-Tags als HTML interpretiert)
+                node.innerHTML = "Bot: " + formattedText;
+
+                // Füge das neue Listenelement zur Nachrichtenliste hinzu
                 document.getElementById("messagesList").appendChild(node);
+
+                // Scrollt das Nachrichtenfenster nach unten
                 scrollToBottom();
+
+                // Füge die neue Nachricht zum Nachrichtenarray hinzu
                 var neueNachricht = { bot: ret.last };
                 msg[3].chat.push(neueNachricht);
 
-                // Update MathJax nach dem Einfügen neuer Nachrichten
-                MathJax.typeset(); // Dies sorgt dafür, dass MathJax die LaTeX-Syntax erneut rendert
+                // Aktualisiere MathJax, um sicherzustellen, dass LaTeX-Formeln richtig gerendert werden
+                MathJax.typeset();
             })
             .catch((error) => {
                 console.error('Fehler:', error);
