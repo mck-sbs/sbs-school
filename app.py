@@ -69,7 +69,8 @@ def index():
 
 @app.route("/delete", methods=('GET','POST'))
 @app.route("/delete.html", methods=('GET','POST'))
-def delete():
+@htpasswd.required
+def delete(user):
     form = df.DelForm()
     data = " "
 
@@ -104,7 +105,7 @@ def delete():
 @htpasswd.required
 def generatorpic(user):
     form = gf.GenPicForm()
-    data = "Bitte die Bedingung und die Anzahl der Links oben eingeben. Im Anschluss wird die API-Key überrpüft. Mit jedem Link kann nur ein Bild generiert werden."
+    data = "Bitte die Bedingung und die Anzahl der Links oben eingeben. Im Anschluss wird die API-Key überpüft. Mit jedem Link kann nur ein Bild generiert werden."
 
     if form.validate_on_submit():
         link = " "
@@ -153,7 +154,7 @@ def generatorpic(user):
 @htpasswd.required
 def generator(user):
     form = gf.GenForm()
-    data = "Bitte den Kontext oben eingeben. Im Anschluss wird die API-Key überrpüft"
+    data = "Bitte den Kontext oben eingeben. Im Anschluss wird die API-Key überpüft"
 
     if form.validate_on_submit():
         link = " "

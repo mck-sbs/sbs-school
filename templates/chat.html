@@ -25,6 +25,11 @@
 {% endblock %}
 
     {% block scripts %}
+
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script type="text/javascript" id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <script>
 
         var a = document.getElementById('chat-ak').getAttribute('data-name');
@@ -57,6 +62,9 @@
                 scrollToBottom();
                 var neueNachricht = { bot: ret.last };
                 msg[3].chat.push(neueNachricht);
+
+                // Update MathJax nach dem Einfügen neuer Nachrichten
+                MathJax.typeset(); // Dies sorgt dafür, dass MathJax die LaTeX-Syntax erneut rendert
             })
             .catch((error) => {
                 console.error('Fehler:', error);

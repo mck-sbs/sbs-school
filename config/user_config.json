@@ -1,6 +1,7 @@
 {
   "API_KEY": "sk-...",
   "GPT_MODEL": "gpt-4",
+  "DALLE_MODEL": "dall-e-3",
   "LINK": "http://127.0.0.1:5000/",
   "DEL_WINDOW": 7
 }
