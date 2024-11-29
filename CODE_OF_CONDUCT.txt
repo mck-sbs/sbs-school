@@ -1,0 +1,48 @@
+
+# Contributor Code of Conduct
+
+## Ziel
+
+Unser Ziel ist es, eine offene und einladende Umgebung zu schaffen, in der jede Person, unabhängig von ihrer Erfahrung, Identität oder ihrem Hintergrund, einen positiven Beitrag zu unserem Projekt leisten kann. Wir verpflichten uns, ein sicheres und respektvolles Umfeld für alle zu bieten.
+
+## Unser Versprechen
+
+Im Rahmen unserer Teilnahme an diesem Projekt verpflichten wir uns, zu einer belästigungsfreien Erfahrung für alle beizutragen. Unabhängig von Alter, Körpergröße, Behinderung, ethnischer Zugehörigkeit, Geschlechtsidentität und -ausdruck, Erfahrungsniveau, Nationalität, persönlicher Erscheinung, Rasse, Religion, sexueller Identität und Orientierung werden alle Personen respektiert und gleich behandelt.
+
+## Unsere Standards
+
+Beispiele für Verhalten, das zur Schaffung eines positiven Umfelds beiträgt:
+
+- Verwenden von respektvoller und inklusiver Sprache
+- Rücksichtnahme auf unterschiedliche Perspektiven und Erfahrungen
+- Konstruktive Kritik auf freundliche und respektvolle Weise anbieten und annehmen
+- Verantwortung für die eigenen Fehler übernehmen und aus ihnen lernen
+- Fokussierung auf das, was für das Team und das Projekt am besten ist
+
+Beispiele für inakzeptables Verhalten:
+
+- Verwenden von sexuell expliziten oder anstößigen Ausdrücken und Inhalten
+- Persönliche Angriffe oder Beleidigungen
+- Öffentliches oder privates Belästigen
+- Veröffentlichung von privaten Informationen ohne ausdrückliche Erlaubnis
+- Jegliches anderes Verhalten, das als unprofessionell oder unangemessen betrachtet werden kann
+
+## Verantwortlichkeiten
+
+Das Projektteam ist verantwortlich dafür, unsere Standards durchzusetzen. Wir haben das Recht und die Verantwortung, Kommentare, Commits, Code, Wiki-Bearbeitungen, Issues und andere Beiträge zu entfernen, die nicht mit diesem Verhaltenskodex übereinstimmen, und Maßnahmen zu ergreifen, wenn sie als unangemessen, bedrohlich oder schädlich erachtet werden.
+
+## Durchsetzung
+
+Fälle von missbräuchlichem, belästigendem oder anderweitig inakzeptablem Verhalten können dem Projektteam gemeldet werden. Alle Beschwerden werden vertraulich behandelt und überprüft, und es wird eine angemessene Antwort erfolgen. Das Projektteam ist verpflichtet, das Problem unter Berücksichtigung der Privatsphäre und des Respekts gegenüber allen Betroffenen zu lösen.
+
+## Geltungsbereich
+
+Dieser Verhaltenskodex gilt sowohl innerhalb von Projekträumen als auch in öffentlichen Bereichen, wenn eine Person das Projekt oder dessen Community repräsentiert.
+
+## Kontakt für Verstöße
+
+Bitte meldet Verstöße gegen diesen Verhaltenskodex an folgende E-Mail-Adresse: [m.Karatas@sbs-herzogenaurach.de].
+
+## Lizenz
+
+Dieser Verhaltenskodex basiert auf der [Contributor Covenant](https://www.contributor-covenant.org), Version 2.1, und steht unter einer [Creative Commons Attribution 4.0 International (CC BY 4.0) Lizenz](https://creativecommons.org/licenses/by/4.0/).
