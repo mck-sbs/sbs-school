@@ -7,11 +7,11 @@
 
 For testing: user=sbs pw=sbs
 
-![conrol pic1](../../Desktop/ai-school%202/pics/index.png)
-![conrol pic2](../../Desktop/ai-school%202/pics/index_mobile.png)
-![conrol pic2](../../Desktop/ai-school%202/pics/generator.png)
-![conrol pic3](../../Desktop/ai-school%202/pics/chat.png)
-![conrol pic4](../../Desktop/ai-school%202/pics/delete.png)
+![conrol pic1](./pics/index.png)
+![conrol pic2](./pics/index_mobile.png)
+![conrol pic2](./pics/generator.png)
+![conrol pic3](./pics/chat.png)
+![conrol pic4](./pics/delete.png)
 
 Dependencies: pip install flask-simple-crypt bootstrap-flask flask-sqlalchemy flask-htpasswd openai flask-wtf
 
