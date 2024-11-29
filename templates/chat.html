@@ -1,4 +1,4 @@
-{% extends "base_student.html" %}
+ {% extends "base_student.html" %}
 {% from 'bootstrap4/form.html' import render_form, render_field %}
 
 
@@ -44,23 +44,6 @@
             var messagesList = document.getElementById("messagesList");
             messagesList.scrollTop = messagesList.scrollHeight;
         }
-
-        function typeText(element, text, delay = 20) {
-        let index = 0;
-        function addCharacter() {
-            if (index < text.length) {
-                element.innerHTML += text[index++];
-                scrollToBottom(); // Scrollt immer nach unten
-                setTimeout(addCharacter, delay); // Nächstes Zeichen mit Verzögerung
-                MathJax.typeset()
-            } else {
-                sendButtonChat.disabled = false;
-                MathJax.typeset(); // Aktualisiert MathJax nach vollständiger Ausgabe
-            }
-        }
-        addCharacter();
-    }
-
         function sendDataToFlaskChat(dataToSend) {
             fetch('/send_message', {
                 method: 'POST',
@@ -80,9 +63,7 @@
                 .replace(/ {2}/g, "&nbsp;&nbsp;"); // Doppelte Leerzeichen durch &nbsp;
 
                 // Setze den Text als HTML-Inhalt des Listenelements (dadurch werden <br>-Tags als HTML interpretiert)
-                //node.innerHTML = "Bot: " + formattedText;
-
-                typeText(node, ret.last);
+                node.innerHTML = "Bot: " + formattedText;
 
                 // Füge das neue Listenelement zur Nachrichtenliste hinzu
                 document.getElementById("messagesList").appendChild(node);
@@ -122,11 +103,12 @@
         sendDataToFlaskChat({ message: msg });
         this.msg.value = ''; // Setzt das 'msg' Feld zurück
         // Button nach 3 Sekunden wieder aktivieren
-        //setTimeout(function() {
-        //    sendButtonChat.disabled = false;
-        //}, 3000); // 3000 Millisekunden
+        setTimeout(function() {
+            sendButtonChat.disabled = false;
+        }, 3000); // 3000 Millisekunden
     });
 
 
     </script>
     {% endblock %}
+
