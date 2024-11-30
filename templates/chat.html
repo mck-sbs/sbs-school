@@ -44,6 +44,43 @@
             var messagesList = document.getElementById("messagesList");
             messagesList.scrollTop = messagesList.scrollHeight;
         }
+
+        function typeText(element, text, delay = 10) {
+            let index = 0;
+
+            // Text vorbereiten: Ersetze Zeilenumbrüche, Tabs und doppelte Leerzeichen
+            const formattedText = text
+                .replace(/\n/g, "<br>") // Zeilenumbrüche durch <br>
+                .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;") // Tabs durch 4 Leerzeichen
+                .replace(/ {2}/g, "&nbsp;&nbsp;"); // Doppelte Leerzeichen durch &nbsp;
+
+
+            function addCharacter() {
+                if (index < formattedText.length) {
+                    const char = formattedText[index++];
+
+                    // Sonderfall: HTML-Tags und Sonderzeichen
+                    if (char === "&" || char === "<") {
+                        // HTML-Entity oder Tag vollständig auslesen
+                        const tagEnd = formattedText.indexOf(";", index) + 1 || formattedText.indexOf(">", index) + 1;
+                        if (tagEnd > 0) {
+                            element.innerHTML += formattedText.substring(index - 1, tagEnd);
+                            index = tagEnd;
+                        }
+                    } else {
+                        // Normale Zeichen direkt hinzufügen
+                        element.innerHTML += char;
+                    }
+                    scrollToBottom(); // Scrollt immer nach unten
+                    setTimeout(addCharacter, delay); // Nächstes Zeichen mit Verzögerung
+                } else {
+                    MathJax.typeset(); // MathJax nach der Ausgabe anwenden
+                    sendButtonChat.disabled = false; // Button aktivieren
+                }
+            }
+            addCharacter();
+        }
+
         function sendDataToFlaskChat(dataToSend) {
             fetch('/send_message', {
                 method: 'POST',
@@ -56,27 +93,21 @@
             .then(ret => {
                 var node = document.createElement("LI");
 
-                // Ersetze Zeilenumbrüche (\n) durch <br> und Tabs/Leerzeichen durch &nbsp;
-                var formattedText = ret.last
-                .replace(/\n/g, "<br>")         // Zeilenumbrüche durch <br>
-                .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;") // Tabs durch 4 Leerzeichen
-                .replace(/ {2}/g, "&nbsp;&nbsp;"); // Doppelte Leerzeichen durch &nbsp;
-
-                // Setze den Text als HTML-Inhalt des Listenelements (dadurch werden <br>-Tags als HTML interpretiert)
-                node.innerHTML = "Bot: " + formattedText;
+                node.innerHTML = "Bot: ";
 
                 // Füge das neue Listenelement zur Nachrichtenliste hinzu
                 document.getElementById("messagesList").appendChild(node);
 
+                typeText(node, ret.last);
                 // Scrollt das Nachrichtenfenster nach unten
-                scrollToBottom();
+                //scrollToBottom();
 
                 // Füge die neue Nachricht zum Nachrichtenarray hinzu
                 var neueNachricht = { bot: ret.last };
                 msg[3].chat.push(neueNachricht);
 
                 // Aktualisiere MathJax, um sicherzustellen, dass LaTeX-Formeln richtig gerendert werden
-                MathJax.typeset();
+                //MathJax.typeset();
             })
             .catch((error) => {
                 console.error('Fehler:', error);
@@ -103,9 +134,9 @@
         sendDataToFlaskChat({ message: msg });
         this.msg.value = ''; // Setzt das 'msg' Feld zurück
         // Button nach 3 Sekunden wieder aktivieren
-        setTimeout(function() {
-            sendButtonChat.disabled = false;
-        }, 3000); // 3000 Millisekunden
+        //setTimeout(function() {
+        //    sendButtonChat.disabled = false;
+        //}, 3000); // 3000 Millisekunden
     });
 
 
